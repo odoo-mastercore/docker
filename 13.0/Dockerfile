@@ -19,7 +19,7 @@ RUN apt-get update \
             gnupg \
             libssl-dev \
             node-less \
-            npm \
+            npm \ 
             python3-num2words \
             python3-pip \
             python3-phonenumbers \
@@ -49,10 +49,11 @@ RUN apt-get update \
         && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
-# install l10n_ar external dependencies
-RUN pip3 install m2crypto 
-RUN pip3 install git+https://github.com/pysimplesoap/pysimplesoap@stable_py3k
-RUN pip3 install git+https://github.com/reingart/pyafipws@py3k
+# install psycopg2 and l10n_ar external dependencies
+RUN pip3 install m2crypto \
+        && pip3 install psycopg2 \
+        && pip3 install git+https://github.com/pysimplesoap/pysimplesoap@stable_py3k \
+        && pip3 install git+https://github.com/reingart/pyafipws@py3k
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
