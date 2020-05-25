@@ -7,7 +7,7 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 ENV LANG C.UTF-8
 
 # Adding sources
-RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
+#RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/sources.list
 
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN apt-get update \
@@ -38,20 +38,21 @@ RUN apt-get update \
             gcc \
             apt-utils \
             python3-wheel \
-            python3-dev \ 
             swig \
             python3-httplib2 \
             python3-openssl \
             libffi-dev \
-            checkinstall \
         && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
         && echo '7e35a63f9db14f93ec7feeb0fce76b30c08f2057 wkhtmltox.deb' | sha1sum -c - \
         && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
-# install psycopg2 and l10n_ar external dependencies
+# install python3.6 modules and l10n_ar external dependencies
 RUN pip3 install m2crypto \
         && pip3 install psycopg2 \
+        && pip3 install num2words \
+        && pip3 install phonenumbers \
+        && pip3 install qrcode \
         && pip3 install git+https://github.com/pysimplesoap/pysimplesoap@stable_py3k \
         && pip3 install git+https://github.com/reingart/pyafipws@py3k
 
