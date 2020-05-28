@@ -19,6 +19,7 @@ RUN apt-get update \
             npm \
             xz-utils \
             wget \
+            libzlcore-dev \
             libsasl2-dev \
             libldap2-dev \
             nano \
@@ -48,8 +49,9 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
         && rm -f /etc/apt/sources.list.d/pgdg.list \
         && rm -rf /var/lib/apt/lists/*
 
-# Install rtlcss (on Debian buster)
-RUN npm install -g rtlcss
+# Install rtlcss (on Debian buster) and remove openssl
+RUN npm install -g rtlcss \
+        && dpkg -r --force-depends openssl
 
 # Installing Odoo 13.0 python requirements, adding odoo user
 COPY ./requirements.txt /
@@ -57,6 +59,18 @@ RUN pip3 install -r /requirements.txt \
         && rm -rf /root/.cache/pip \
         && adduser --system --group --home /home/odoo --shell /bin/bash odoo \
         && rm /requirements.txt
+
+# Install openSSL 1.0.1
+RUN cd /usr/local/src/ \
+        && wget https://www.openssl.org/source/old/1.0.1/openssl-1.0.1k.tar.gz \
+        && tar -xvf /usr/local/src/openssl-1.0.1k.tar.gz \
+        && cd /usr/local/src/openssl-1.0.1k \
+        && ./config --prefix=/usr/local/ --openssldir=/usr/local/openssl \
+        && make \
+        && make install \
+        && cp -p /usr/local/bin/openssl /usr/bin/openssl \
+        && rm -rf /usr/local/src/*
+
 
 ENV ODOO_VERSION 13.0
 USER odoo
