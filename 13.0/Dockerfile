@@ -90,7 +90,10 @@ RUN chown odoo /etc/odoo/odoo.conf \
     && mkdir -p /usr/local/lib/python3.6/site-packages/pyafipws/cache \
     && chown -R odoo /usr/local/lib/python3.6/site-packages/pyafipws \
     && mkdir -p /var/lib/odoo \
-    && chown -R odoo /var/lib/odoo
+    && chown -R odoo /var/lib/odoo \
+    && mkdir -p /var/log/odoo \
+    && chown -R odoo /var/log/odoo \
+    && touch /var/log/odoo/odoo.log
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
 
 # Expose Odoo services
