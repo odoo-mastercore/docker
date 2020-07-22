@@ -31,12 +31,12 @@ case "$1" in
             exec odoo-bin "$@"
         else
             wait-for-psql.py ${DB_ARGS[@]} --timeout=30
-            exec odoo-bin "$@" "${DB_ARGS[@]}"
+            exec odoo-bin --proxy-mode "$@" "${DB_ARGS[@]}"
         fi
         ;;
     -*)
         wait-for-psql.py ${DB_ARGS[@]} --timeout=30
-        exec odoo-bin "$@" "${DB_ARGS[@]}"
+        exec odoo-bin --proxy-mode "$@" "${DB_ARGS[@]}"
         ;;
     *)
         exec "$@"

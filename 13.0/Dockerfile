@@ -93,7 +93,9 @@ RUN chown odoo /etc/odoo/odoo.conf \
     && chown -R odoo /var/lib/odoo \
     && mkdir -p /var/log/odoo \
     && chown -R odoo /var/log/odoo \
-    && touch /var/log/odoo/odoo.log
+    && touch /var/log/odoo/odoo.log \
+    && mkdir -p /usr/share/GeoIP
+
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
 
 # Expose Odoo services
@@ -103,6 +105,7 @@ EXPOSE 8069 8071 8072
 ENV ODOO_RC /etc/odoo/odoo.conf
 
 COPY wait-for-psql.py /usr/local/bin/wait-for-psql.py
+COPY GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb
 
 # Set default user when running the container
 USER odoo
