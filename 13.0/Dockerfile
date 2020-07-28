@@ -94,6 +94,7 @@ RUN chown odoo /etc/odoo/odoo.conf \
     && mkdir -p /var/log/odoo \
     && chown -R odoo /var/log/odoo \
     && touch /var/log/odoo/odoo.log \
+    && chown -R odoo /var/log/odoo \
     && mkdir -p /usr/share/GeoIP
 
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
