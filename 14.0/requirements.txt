@@ -1,0 +1,15 @@
+#Other Deps
+urllib3==1.25.9
+pyOpenSSL
+M2Crypto
+httplib2
+asn1crypto
+psycopg2-binary 
+CacheControl 
+cachetools 
+suds-jurko
+httplib2.system_ca_certs_locater
+git+https://github.com/pysimplesoap/pysimplesoap@stable_py3k
+git+https://github.com/ingadhoc/pyafipws@py3k
+pdf2image
+geoip2==3.0.0
