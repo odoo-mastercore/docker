@@ -65,13 +65,13 @@ RUN pip3 install -r /requirements.txt \
         && rm -rf /root/.cache/pip \
         && rm /requirements.txt
 
-# Install Odoo
+# Install Odoo on git way
 ENV ODOO_VERSION 14.0
-ARG ODOO_RELEASE=latest
-RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-    && apt-get update \
-    && apt-get -y install --no-install-recommends ./odoo.deb \
-    && rm -rf /var/lib/apt/lists/* odoo.deb
+RUN adduser --system --group --home /home/odoo --shell /bin/bash odoo
+USER odoo
+RUN cd && git clone --depth 1 --branch ${ODOO_VERSION} https://github.com/odoo/odoo
+USER root
+ENV PATH "$PATH:/home/odoo/odoo"
 
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
@@ -81,8 +81,11 @@ COPY ./odoo.conf /etc/odoo/
 RUN chown odoo /etc/odoo/odoo.conf \
     && mkdir -p /mnt/extra-addons \
     && chown -R odoo /mnt/extra-addons \
-    && mkdir -p /usr/local/lib/python3.6/site-packages/pyafipws/cache \
-    && chown -R odoo /usr/local/lib/python3.6/site-packages/pyafipws \
+    && mkdir -p /usr/local/lib/python3.7/dist-packages/pyafipws/cache \
+    && chown -R odoo /usr/local/lib/python3.7/dist-packages/pyafipws \
+    && mkdir -p /var/lib/odoo \
+    && chown -R odoo /var/lib/odoo \
+    && mkdir -p /var/log/odoo \
     && chown -R odoo /var/log/odoo \
     && touch /var/log/odoo/odoo.log \
     && chown -R odoo /var/log/odoo \
@@ -103,6 +106,6 @@ COPY GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb
 USER odoo
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["odoo"]
+CMD ["odoo-bin"]
 
 
