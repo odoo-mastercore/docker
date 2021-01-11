@@ -23,6 +23,11 @@ RUN apt-get update && \
         swig \
         python3-dev \
         python3-wheel \
+        file \
+        libev-dev \
+        mc \
+        locate \
+	python3-gevent \
         python3-num2words \
         python3-pdfminer \
         python3-pip \
