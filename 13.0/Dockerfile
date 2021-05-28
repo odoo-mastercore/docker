@@ -1,5 +1,5 @@
 FROM python:3.6.10-buster
-LABEL maintainer="far@mastercore.net"
+LABEL maintainer="far@sinapsys.global"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
