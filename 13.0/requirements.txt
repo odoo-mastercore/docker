@@ -62,4 +62,4 @@ git+https://github.com/pysimplesoap/pysimplesoap@stable_py3k
 git+https://github.com/ingadhoc/pyafipws@py3k
 pdf2image
 geoip2==3.0.0
-
+openupgradelib
