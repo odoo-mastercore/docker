@@ -10,6 +10,9 @@ ENV LANG C.UTF-8
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         openssl \
+        libsasl2-dev \
+        python3-dev \
+        libldap2-dev \
         ca-certificates \
         curl \
         dirmngr \
@@ -113,5 +116,3 @@ USER odoo
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["odoo-bin"]
-
-
