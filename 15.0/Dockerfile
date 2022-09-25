@@ -1,5 +1,5 @@
 FROM debian:bullseye-slim
-MAINTAINER Mastercore Sinapsys Global <far@sinapsys.global>
+LABEL maintainer="Mastercore Sinapsys Global <far@sinapsys.global>"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
@@ -86,7 +86,7 @@ ENV PATH "$PATH:/home/odoo/odoo"
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
 
-# Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
+# Set permissions and mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN chown odoo /etc/odoo/odoo.conf \
     && mkdir -p /mnt/extra-addons \
     && chown -R odoo /mnt/extra-addons \
