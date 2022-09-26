@@ -1,5 +1,5 @@
 # To build run command
-# docker buildx build -f Dockerfile_ARM --platform linux/arm64 -t pandoo/odoo:15.0 . --no-cache
+# docker buildx build -f Dockerfile_ARM --platform linux/arm64 -t pandoo/odoo:15.0-arm64 . --no-cache
 FROM --platform=linux/arm64 debian:bullseye-slim
 LABEL maintainer="Mastercore Sinapsys Global <far@sinapsys.global>"
 
