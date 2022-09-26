@@ -1,6 +1,6 @@
 # To build run command
 # docker buildx build -f Dockerfile_AMD --platform linux/amd64 -t pandoo/odoo:15.0 . --no-cache
-FROM --platform linux/amd64 debian:bullseye-slim
+FROM --platform=linux/amd64 debian:bullseye-slim
 LABEL maintainer="Mastercore Sinapsys Global <far@sinapsys.global>"
 
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
@@ -11,6 +11,7 @@ ENV LANG C.UTF-8
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        zsh \
         openssl \
         libsasl2-dev \
         python3-dev \
@@ -32,6 +33,7 @@ RUN apt-get update && \
         file \
         libev-dev \
         mc \
+        nano \
         locate \
         python3-gevent \
         python3-num2words \
@@ -52,6 +54,9 @@ RUN apt-get update && \
     && echo 'ea8277df4297afc507c61122f3c349af142f31e5 wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+
+# install Oh my zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -78,11 +83,15 @@ RUN pip3 install -r /requirements.txt \
 
 # Install Odoo on git way
 ENV ODOO_VERSION 15.0
-RUN adduser --system --group --home /home/odoo --shell /bin/bash odoo
+RUN adduser --system --group --home /home/odoo --shell /bin/zsh odoo
 USER odoo
+COPY ./.oh-my-zsh /home/odoo/.oh-my-zsh
+COPY ./.zshrc /home/odoo/.zshrc
 RUN cd && git clone --depth 1 --branch ${ODOO_VERSION} https://github.com/odoo/odoo
 USER root
 ENV PATH "$PATH:/home/odoo/odoo"
+RUN chown odoo:odoo /home/odoo/.zshrc
+RUN chown odoo:odoo /home/odoo/.oh-my-zsh
 
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
