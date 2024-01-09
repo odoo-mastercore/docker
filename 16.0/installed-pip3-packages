@@ -187,3 +187,7 @@ zeep==4.1.0
 zipp==1.0.0
 zope.event==4.4
 zope.interface==5.4.0
+xmltodict
+dicttoxml
+signxml
+xmlschema
