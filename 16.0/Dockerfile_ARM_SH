@@ -1,0 +1,87 @@
+# To build run command
+# docker buildx build -f Dockerfile_ARM_SH --platform linux/arm64 -t pandoo/odoo:16.0-arm64 . --no-cache
+FROM --platform=linux/arm64 ubuntu:jammy
+LABEL maintainer="Mastercore Sinapsys Global <far@sinapsys.global>"
+
+SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
+
+ARG DEBIAN_FRONTEND=noninteractive
+# Generate locale C.UTF-8 for postgres and general locale data
+ENV LANG C.UTF-8
+
+COPY ./installed-shpackages-arm /installed-packages
+COPY ./repo-shkeys /repo-keys
+
+# Install linux packages
+# This packages was take from SH server with:
+# dpkg --get-selections > /tmp/installed-packages
+# apt-key exportall > reposh-keys 2>/dev/null
+RUN apt-get -y update && \
+    apt-get install dselect gnupg wget -y --no-install-recommends && \
+    apt-key add repo-keys 2>/dev/null && \
+    dselect update && \
+    dpkg --set-selections < installed-packages && \
+    apt-get dselect-upgrade -y --no-install-recommends && \
+    rm /repo-keys
+
+# install Oh my zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+RUN npm install -g rtlcss && pip3 install --upgrade pip
+
+# Installing pip3 requirements
+# This packages was take from SH server with:
+# pip3 freeze
+COPY ./installed-pip3-packages /requirements.txt
+RUN pip3 install -r /requirements.txt \
+        && rm -rf /root/.cache/pip \
+        && rm /requirements.txt
+
+# Install Odoo on git way
+ENV ODOO_VERSION 16.0
+RUN adduser --system --group --home /home/odoo --shell /bin/zsh odoo
+USER odoo
+COPY ./.oh-my-zsh /home/odoo/.oh-my-zsh
+COPY ./.zshrc /home/odoo/.zshrc
+RUN cd && git clone --depth 1 --branch ${ODOO_VERSION} https://github.com/odoo/odoo
+USER root
+ENV PATH "$PATH:/home/odoo/odoo"
+RUN chown odoo:odoo /home/odoo/.zshrc
+RUN chown odoo:odoo /home/odoo/.oh-my-zsh
+
+# Copy entrypoint script and Odoo configuration file
+COPY ./entrypoint.sh /
+COPY ./odoo.conf /etc/odoo/
+
+# Set permissions and mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
+USER root
+RUN chown odoo:odoo /etc/odoo/odoo.conf \
+    && mkdir -p /mnt/extra-addons \
+    && chown -R odoo:odoo /mnt/extra-addons \
+    && mkdir -p /usr/local/lib/python3.6/dist-packages/py3afipws/cache \
+    && chown -R odoo:odoo /usr/local/lib/python3.6/dist-packages/py3afipws \
+    && mkdir -p /var/lib/odoo \
+    && chown -R odoo:odoo /var/lib/odoo \
+    && mkdir -p /var/log/odoo \
+    && chown -R odoo:odoo /var/log/odoo \
+    && touch /var/log/odoo/odoo.log \
+    && chown odoo:odoo /var/log/odoo/odoo.log \
+    && mkdir -p /usr/share/GeoIP
+
+VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
+
+# Expose Odoo services
+EXPOSE 8069 8071 8072
+
+# Set the default config file
+ENV ODOO_RC /etc/odoo/odoo.conf
+
+COPY wait-for-psql.py /usr/local/bin/wait-for-psql.py
+COPY GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb
+RUN chown odoo:odoo /usr/share/GeoIP/GeoLite2-City.mmdb
+
+# Set default user when running the container
+USER odoo
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo-bin"]
