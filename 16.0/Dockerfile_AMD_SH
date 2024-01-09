@@ -24,6 +24,11 @@ RUN apt-get -y update && \
     apt-get dselect-upgrade -y --no-install-recommends && \
     rm /repo-keys
 
+# Install wkhtmltox
+RUN chmod 777 /tmp && cd /tmp && \
+    wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb && \
+    apt install -f ./wkhtmltox_0.12.6.1-2.jammy_amd64.deb 
+
 # install Oh my zsh
 RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 

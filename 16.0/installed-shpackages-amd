@@ -1558,7 +1558,6 @@ vim-runtime                                     install
 vim-tiny                                        install
 wget                                            install
 whiptail                                        install
-wkhtmltox                                       install
 wpasupplicant                                   install
 x11-common                                      install
 x11-utils                                       install
