@@ -127,7 +127,6 @@ glib-networking-services                        install
 gnupg                                           install
 gnupg-l10n                                      install
 gnupg-utils                                     install
-google-chrome-stable                            install
 gpg                                             install
 gpg-agent                                       install
 gpg-wks-client                                  install
@@ -190,7 +189,6 @@ libasound2-data                                 install
 libassuan0:amd64                                install
 libatk-bridge2.0-0:amd64                        install
 libatk1.0-0:amd64                               install
-ibatk1.0-data                                  install
 libatm1:amd64                                   install
 libatomic1:amd64                                install
 libatspi2.0-0:amd64                             install
